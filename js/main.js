@@ -9,7 +9,6 @@ function main() {
 	scene.add( neuralNet.meshComponents );
 
 	initGui();
-
 	run();
-
+	$(gui.domElement).attr("hidden", true);
 }

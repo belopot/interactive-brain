@@ -51,5 +51,4 @@ Signal.prototype.travel = function ( deltaTime ) {
 	// pos = this.axon.getPointAt(this.t);	// uniform point distribution but slower calculation
 
 	this.particle.set( pos.x, pos.y, pos.z );
-
 };

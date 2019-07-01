@@ -107,7 +107,6 @@ Signal.prototype.travel = function ( deltaTime ) {
 	// pos = this.axon.getPointAt(this.t);	// uniform point distribution but slower calculation
 
 	this.particle.set( pos.x, pos.y, pos.z );
-
 };
 
 // Particle Pool ---------------------------------------------------------
@@ -122,8 +121,8 @@ function ParticlePool( poolSize ) {
 
 	this.offScreenPos = new THREE.Vector3( 9999, 9999, 9999 );
 
-	this.pColor = '#ffffff';
-	this.pSize = 0.6;
+	this.pColor = '#ff0000';
+	this.pSize = 2;
 
 	for ( var ii = 0; ii < this.poolSize; ii++ ) {
 		this.particles[ ii ] = new Particle( this );
@@ -204,7 +203,7 @@ function Particle( particlePool ) {
 	this.particlePool = particlePool;
 	this.available = true;
 	THREE.Vector3.call( this, this.particlePool.offScreenPos.x, this.particlePool.offScreenPos.y, this.particlePool.offScreenPos.z );
-
+	
 }
 
 Particle.prototype = Object.create( THREE.Vector3.prototype );
@@ -213,7 +212,6 @@ Particle.prototype.free = function () {
 
 	this.available = true;
 	this.set( this.particlePool.offScreenPos.x, this.particlePool.offScreenPos.y, this.particlePool.offScreenPos.z );
-
 };
 
 // Axon extends THREE.CubicBezierCurve3 ------------------------------------------------------------------
@@ -284,12 +282,12 @@ function NeuralNetwork() {
 		*/
 
 		verticesSkipStep: 2,
-		maxAxonDist: 10,
+		maxAxonDist: 7,
 		maxConnectionsPerNeuron: 6,
 		signalMinSpeed: 1.75,
-		signalMaxSpeed: 3.25,
-		currentMaxSignals: 3000,
-		limitSignals: 10000
+		signalMaxSpeed: 2.75,
+		currentMaxSignals: 100,
+		limitSignals: 140
 
 	};
 
@@ -515,8 +513,8 @@ NeuralNetwork.prototype.update = function ( deltaTime ) {
 	if ( this.components.allSignals.length === 0 ) {
 
 		this.resetAllNeurons();
-		this.releaseSignalAt( this.components.neurons[ THREE.Math.randInt( 0, this.components.neurons.length ) ] );
-
+		// this.releaseSignalAt( this.components.neurons[ THREE.Math.randInt( 0, this.components.neurons.length ) ] );
+		this.releaseSignalAt( this.components.neurons[ 30 ] );
 	}
 
 	// update and remove dead signals
@@ -723,10 +721,15 @@ scene = new THREE.Scene();
 
 // ---- Camera
 camera = new THREE.PerspectiveCamera( 75, screenRatio, 10, 5000 );
+camera.position.set(0, 0, 150);
 // camera orbit control
 cameraCtrl = new THREE.OrbitControls( camera, container );
-cameraCtrl.object.position.y = 150;
-cameraCtrl.update();
+cameraCtrl.object.position.z = 250;
+// cameraCtrl.object.position.x = 150;
+cameraCtrl.autoRotate = true;
+cameraCtrl.autoRotateSpeed = 1;
+cameraCtrl.enablePan = false;
+cameraCtrl.enableRotate = false;
 
 // ---- Renderer
 renderer = new THREE.WebGLRenderer( {
@@ -787,9 +790,8 @@ function main() {
 	scene.add( neuralNet.meshComponents );
 
 	initGui();
-
 	run();
-
+	$(gui.domElement).attr("hidden", true);
 }
 
 // GUI --------------------------------------------------------
@@ -848,10 +850,12 @@ function update() {
 
 	updateHelpers();
 
-	if ( !sceneSettings.pause ) {
+	if (!sceneSettings.pause) {
 
 		var deltaTime = clock.getDelta();
-		neuralNet.update( deltaTime );
+		cameraCtrl.update();
+
+		neuralNet.update(deltaTime);
 		updateGuiInfo();
 
 	}
@@ -861,13 +865,13 @@ function update() {
 // ----  draw loop
 function run() {
 
-	requestAnimationFrame( run );
-	renderer.setClearColor( sceneSettings.bgColor, 1 );
+	requestAnimationFrame(run);
+	renderer.setClearColor(sceneSettings.bgColor, 1);
 	renderer.clear();
 	update();
-	renderer.render( scene, camera );
+	renderer.render(scene, camera);
 	stats.update();
-	FRAME_COUNT ++;
+	FRAME_COUNT++;
 
 }
 

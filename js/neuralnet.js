@@ -16,12 +16,12 @@ function NeuralNetwork() {
 		*/
 
 		verticesSkipStep: 2,
-		maxAxonDist: 10,
+		maxAxonDist: 7,
 		maxConnectionsPerNeuron: 6,
 		signalMinSpeed: 1.75,
-		signalMaxSpeed: 3.25,
-		currentMaxSignals: 3000,
-		limitSignals: 10000
+		signalMaxSpeed: 2.75,
+		currentMaxSignals: 100,
+		limitSignals: 140
 
 	};
 
@@ -247,8 +247,8 @@ NeuralNetwork.prototype.update = function ( deltaTime ) {
 	if ( this.components.allSignals.length === 0 ) {
 
 		this.resetAllNeurons();
-		this.releaseSignalAt( this.components.neurons[ THREE.Math.randInt( 0, this.components.neurons.length ) ] );
-
+		// this.releaseSignalAt( this.components.neurons[ THREE.Math.randInt( 0, this.components.neurons.length ) ] );
+		this.releaseSignalAt( this.components.neurons[ 30 ] );
 	}
 
 	// update and remove dead signals

@@ -30,10 +30,15 @@ scene = new THREE.Scene();
 
 // ---- Camera
 camera = new THREE.PerspectiveCamera( 75, screenRatio, 10, 5000 );
+camera.position.set(0, 0, 150);
 // camera orbit control
 cameraCtrl = new THREE.OrbitControls( camera, container );
-cameraCtrl.object.position.y = 150;
-cameraCtrl.update();
+cameraCtrl.object.position.z = 250;
+// cameraCtrl.object.position.x = 150;
+cameraCtrl.autoRotate = true;
+cameraCtrl.autoRotateSpeed = 1;
+cameraCtrl.enablePan = false;
+cameraCtrl.enableRotate = false;
 
 // ---- Renderer
 renderer = new THREE.WebGLRenderer( {

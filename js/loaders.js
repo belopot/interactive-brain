@@ -50,7 +50,7 @@ shaderLoader.loadMultiple( SHADER_CONTAINER, {
 
 var OBJ_MODELS = {};
 var OBJloader = new THREE.OBJLoader( loadingManager );
-OBJloader.load( 'models/brain_vertex_low.obj', function ( model ) {
+OBJloader.load( 'models/brain_vertex_high.obj', function ( model ) {
 
 	OBJ_MODELS.brain = model.children[ 0 ];
 
@@ -62,5 +62,11 @@ var textureLoader = new THREE.TextureLoader( loadingManager );
 textureLoader.load( 'sprites/electric.png', function ( tex ) {
 
 	TEXTURES.electric = tex;
+
+} );
+
+textureLoader.load( 'sprites/mark.png', function ( tex ) {
+
+	TEXTURES.mark = tex;
 
 } );

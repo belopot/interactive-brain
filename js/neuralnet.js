@@ -15,7 +15,7 @@ function NeuralNetwork() {
 		limitSignals           : 10000
 		*/
 
-		verticesSkipStep: 2,
+		verticesSkipStep: 4,
 		maxAxonDist: 10,
 		maxConnectionsPerNeuron: 6,
 		signalMinSpeed: 0.35,
@@ -24,10 +24,15 @@ function NeuralNetwork() {
 		limitSignals: 3000
 
 	};
- 
+
 	this.meshComponents = new THREE.Object3D();
-	this.particlePool = new ParticlePool(this.settings.limitSignals);
-	this.meshComponents.add(this.particlePool.meshComponents);
+
+	this.particlePools = [];
+	for (var ii = 0; ii < SignalData.length; ii++) {
+		var pp = new ParticlePool(this.settings.limitSignals, SignalData[ii].size);
+		this.meshComponents.add(pp.meshComponents);
+		this.particlePools.push(pp);
+	}
 
 	// NN component containers
 	this.components = {
@@ -37,7 +42,7 @@ function NeuralNetwork() {
 	};
 
 	// axon
-	this.axonOpacityMultiplier = 0.2;
+	this.axonOpacityMultiplier = 0.1;
 	this.axonColor = '#ffffff';
 	this.axonGeom = new THREE.BufferGeometry();
 	this.axonPositions = [];
@@ -224,30 +229,26 @@ NeuralNetwork.prototype.update = function (deltaTime) {
 	var n, ii;
 	var currentTime = Date.now();
 
-	///Increase of neuron's signal timer
-	this.components.neurons[30].signalTimer += deltaTime;
-	this.components.neurons[300].signalTimer += deltaTime;
-
 	// update neurons state and release signal
-	for (ii = 0; ii < this.components.neurons.length; ii++) {
+	// for (ii = 0; ii < this.components.neurons.length; ii++) {
 
-		n = this.components.neurons[ii];
+	// 	n = this.components.neurons[ii];
 
-		if (this.components.allSignals.length < this.settings.currentMaxSignals - this.settings.maxConnectionsPerNeuron) { // limit total signals currentMaxSignals - maxConnectionsPerNeuron because allSignals can not bigger than particlePool size
+	// 	if (this.components.allSignals.length < this.settings.currentMaxSignals - this.settings.maxConnectionsPerNeuron) { // limit total signals currentMaxSignals - maxConnectionsPerNeuron because allSignals can not bigger than particlePool size
 
-			if (n.receivedSignal) { // Traversal mode
-				// if (n.receivedSignal && (currentTime - n.lastSignalRelease > n.releaseDelay) && n.firedCount < 8)  {	// Random mode
-				// if (n.receivedSignal && !n.fired )  {	// Single propagation mode
-				n.fired = true;
-				n.lastSignalRelease = currentTime;
-				n.releaseDelay = THREE.Math.randInt(100, 1000);
-				// this.releaseSignalAt(n);
-			}
+	// 		if (n.receivedSignal) { // Traversal mode
+	// 			// if (n.receivedSignal && (currentTime - n.lastSignalRelease > n.releaseDelay) && n.firedCount < 8)  {	// Random mode
+	// 			// if (n.receivedSignal && !n.fired )  {	// Single propagation mode
+	// 			n.fired = true;
+	// 			n.lastSignalRelease = currentTime;
+	// 			n.releaseDelay = THREE.Math.randInt(100, 1000);
+	// 			this.releaseSignalAt(n);
+	// 		}
 
-		}
+	// 	}
 
-		n.receivedSignal = false; // if neuron recieved signal but still in delay reset it
-	}
+	// 	n.receivedSignal = false; // if neuron recieved signal but still in delay reset it
+	// }
 
 	// reset all neurons and when there is no signal and trigger release signal at random neuron
 	// if (this.components.allSignals.length === 0) {
@@ -255,19 +256,15 @@ NeuralNetwork.prototype.update = function (deltaTime) {
 	// 	this.releaseSignalAt( this.components.neurons[ THREE.Math.randInt( 0, this.components.neurons.length ) ] );
 	// }
 
-	if (this.components.neurons[30].signalCount === 0) {
-		this.components.neurons[30].reset();
-		this.components.neurons[30].releaseDelay = 1000;
-		this.components.neurons[30].signalTimer = 0;
-		this.releaseSignalAt(this.components.neurons[30]);
+
+	for (var ii = 0; ii < SignalData.length; ii++) {
+		this.components.neurons[SignalData[ii].neuron_id].signalTimer += deltaTime;
+		if (this.components.neurons[SignalData[ii].neuron_id].signalCount === 0 && this.components.neurons[SignalData[ii].neuron_id].signalTimer > SignalData[ii].interval) {
+			this.components.neurons[SignalData[ii].neuron_id].reset();
+			this.releaseSignalAt(SignalData[ii].idx, this.components.neurons[SignalData[ii].neuron_id]);
+		}
 	}
 
-	if (this.components.neurons[300].signalCount === 0) {
-		this.components.neurons[300].reset();
-		this.components.neurons[300].releaseDelay = 5000;
-		this.components.neurons[300].signalTimer = 0;
-		this.releaseSignalAt(this.components.neurons[300]);
-	}
 
 	// update and remove dead signals
 	for (var j = this.components.allSignals.length - 1; j >= 0; j--) {
@@ -287,7 +284,10 @@ NeuralNetwork.prototype.update = function (deltaTime) {
 	}
 
 	// update particle pool vertices
-	this.particlePool.update();
+	for (var ii = 0; ii < this.particlePools.length; ii++) {
+		this.particlePools[ii].update();
+	}
+
 
 	// update info for GUI
 	this.updateInfo();
@@ -315,8 +315,8 @@ NeuralNetwork.prototype.constructAxonArrayBuffer = function (axon) {
 	}
 };
 
-NeuralNetwork.prototype.releaseSignalAt = function (neuron) {
-	var signals = neuron.createSignal(this.particlePool, this.settings.signalMinSpeed, this.settings.signalMaxSpeed);
+NeuralNetwork.prototype.releaseSignalAt = function (signal_idx, neuron) {
+	var signals = neuron.createSignal(this.particlePools[signal_idx], this.settings.signalMinSpeed, this.settings.signalMaxSpeed);
 	for (var ii = 0; ii < signals.length; ii++) {
 		var s = signals[ii];
 		this.components.allSignals.push(s);
@@ -360,7 +360,9 @@ NeuralNetwork.prototype.updateSettings = function () {
 	this.axonUniforms.color.value.set(this.axonColor);
 	this.axonUniforms.opacityMultiplier.value = this.axonOpacityMultiplier;
 
-	this.particlePool.updateSettings();
+	for (i = 0; i < this.particlePools.length; i++) {
+		this.particlePools[i].updateSettings();
+	}
 
 
 };

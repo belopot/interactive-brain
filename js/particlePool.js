@@ -1,6 +1,6 @@
 // Particle Pool ---------------------------------------------------------
 
-function ParticlePool( poolSize ) {
+function ParticlePool( poolSize, signalSize ) {
 
 	this.spriteTextureSignal = TEXTURES.electric;
 
@@ -11,7 +11,7 @@ function ParticlePool( poolSize ) {
 	this.offScreenPos = new THREE.Vector3( 9999, 9999, 9999 );
 
 	this.pColor = '#ff0000';
-	this.pSize = 2.6;
+	this.pSize = 2 * signalSize;
 
 	for ( var ii = 0; ii < this.poolSize; ii++ ) {
 		this.particles[ ii ] = new Particle( this );
@@ -70,7 +70,6 @@ ParticlePool.prototype.getParticle = function () {
 ParticlePool.prototype.update = function () {
 
 	this.pGeom.verticesNeedUpdate = true;
-
 };
 
 ParticlePool.prototype.updateSettings = function () {

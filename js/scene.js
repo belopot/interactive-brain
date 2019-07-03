@@ -1,7 +1,7 @@
 // Scene --------------------------------------------------------
 /* exported updateHelpers */
 
-if ( !Detector.webgl ) {
+if (!Detector.webgl) {
 	Detector.addGetWebGLMessage();
 }
 
@@ -25,46 +25,46 @@ var sceneSettings = {
 };
 
 // ---- Scene
-container = document.getElementById( 'canvas-container' );
+container = document.getElementById('canvas-container');
 scene = new THREE.Scene();
 
 // ---- Camera
-camera = new THREE.PerspectiveCamera( 75, screenRatio, 10, 5000 );
-camera.position.set(0, 0, 150);
+camera = new THREE.PerspectiveCamera(75, screenRatio, 10, 5000);
+camera.position.set(0, 150, 0);
 // camera orbit control
-cameraCtrl = new THREE.OrbitControls( camera, container );
-cameraCtrl.object.position.z = 150;
+cameraCtrl = new THREE.OrbitControls(camera, container);
+// cameraCtrl.object.position.z = 150;
 // cameraCtrl.object.position.x = 150;
-cameraCtrl.autoRotate = true;
+cameraCtrl.autoRotate = false;
 cameraCtrl.autoRotateSpeed = 1;
 cameraCtrl.enablePan = false;
 cameraCtrl.enableRotate = false;
 
 // ---- Renderer
-renderer = new THREE.WebGLRenderer( {
+renderer = new THREE.WebGLRenderer({
 	antialias: true,
 	alpha: true
-} );
-renderer.setSize( WIDTH, HEIGHT );
-renderer.setPixelRatio( pixelRatio );
-renderer.setClearColor( sceneSettings.bgColor, 1 );
+});
+renderer.setSize(WIDTH, HEIGHT);
+renderer.setPixelRatio(pixelRatio);
+renderer.setClearColor(sceneSettings.bgColor, 1);
 renderer.autoClear = false;
-container.appendChild( renderer.domElement );
+container.appendChild(renderer.domElement);
 
 // ---- Stats
 stats = new Stats();
-container.appendChild( stats.domElement );
+container.appendChild(stats.domElement);
 
 // ---- grid & axis helper
-var gridHelper = new THREE.GridHelper( 600, 50 );
-gridHelper.setColors( 0x00bbff, 0xffffff );
+var gridHelper = new THREE.GridHelper(600, 50);
+gridHelper.setColors(0x00bbff, 0xffffff);
 gridHelper.material.opacity = 0.1;
 gridHelper.material.transparent = true;
 gridHelper.position.y = -300;
-scene.add( gridHelper );
+scene.add(gridHelper);
 
-var axisHelper = new THREE.AxisHelper( 50 );
-scene.add( axisHelper );
+var axisHelper = new THREE.AxisHelper(50);
+scene.add(axisHelper);
 
 function updateHelpers() {
 	axisHelper.visible = sceneSettings.enableAxisHelper;
@@ -87,3 +87,4 @@ scene.add( light );
 light = new THREE.AmbientLight( 0x111111 );
 scene.add( light );
 */
+

@@ -11,7 +11,6 @@ function Signal( particlePool, minSpeed, maxSpeed ) {
 	this.axon = null;
 	this.particle = particlePool.getParticle();
 	THREE.Vector3.call( this );
-
 }
 
 Signal.prototype = Object.create( THREE.Vector3.prototype );

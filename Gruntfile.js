@@ -24,7 +24,8 @@ module.exports = function ( grunt ) {
 			},
 			vendor: {
 				src: [ 'js/vendor/underscore.js', 'js/vendor/jquery.min.js', 'js/vendor/Detector.js', 'js/vendor/dat.gui.min.js',
-						 'js/vendor/stats.min.js', 'js/vendor/three.js', 'js/vendor/OrbitControls.js', 'js/vendor/OBJLoader.js' ],
+						 'js/vendor/stats.min.js', 'js/vendor/three.js', 'js/vendor/OrbitControls.js', 'js/vendor/OBJLoader.js',
+						'js/vendor/tweenmax.min.js'],
 
 				dest: 'js/vendor/vendor-merge.js'
 			}

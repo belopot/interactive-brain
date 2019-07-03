@@ -33,6 +33,7 @@ Signal.prototype.travel = function ( deltaTime ) {
 		if ( this.t >= 1 ) {
 			this.t = 1;
 			this.alive = false;
+			this.axon.neuronA.signalCount--;
 			this.axon.neuronB.receivedSignal = true;
 			this.axon.neuronB.prevReleaseAxon = this.axon;
 		}
@@ -42,6 +43,7 @@ Signal.prototype.travel = function ( deltaTime ) {
 		if ( this.t <= 0 ) {
 			this.t = 0;
 			this.alive = false;
+			this.axon.neuronB.signalCount--;
 			this.axon.neuronA.receivedSignal = true;
 			this.axon.neuronA.prevReleaseAxon = this.axon;
 		}

@@ -8,7 +8,6 @@ function update() {
 
 		var deltaTime = clock.getDelta();
 		cameraCtrl.update();
-
 		neuralNet.update(deltaTime);
 		updateGuiInfo();
 

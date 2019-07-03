@@ -13,7 +13,7 @@ loadingManager.onLoad = function () {
 
 loadingManager.onProgress = function ( item, loaded, total ) {
 
-	console.log( loaded + '/' + total, item );
+	// console.log( loaded + '/' + total, item );
 
 };
 

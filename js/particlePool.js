@@ -11,7 +11,7 @@ function ParticlePool( poolSize ) {
 	this.offScreenPos = new THREE.Vector3( 9999, 9999, 9999 );
 
 	this.pColor = '#ff0000';
-	this.pSize = 2;
+	this.pSize = 2.6;
 
 	for ( var ii = 0; ii < this.poolSize; ii++ ) {
 		this.particles[ ii ] = new Particle( this );
@@ -38,7 +38,7 @@ function ParticlePool( poolSize ) {
 	// outer particle glow
 	this.pMat_outer = this.pMat.clone();
 	this.pMat_outer.size = this.pSize * 10;
-	this.pMat_outer.opacity = 0.04;
+	this.pMat_outer.opacity = 0.06;
 
 	this.pMesh_outer = new THREE.PointCloud( this.pGeom, this.pMat_outer );
 	this.pMesh_outer.frustumCulled = false;

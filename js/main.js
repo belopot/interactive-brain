@@ -9,7 +9,7 @@ function main() {
 	scene.add(neuralNet.meshComponents);
 
 	var geometry = new THREE.PlaneGeometry(100, 100, 1);
-	var material = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, map: TEXTURES.mark, combine: THREE.AdditiveBlending, transparent: true });
+	var material = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, map: TEXTURES.mark, combine: THREE.AdditiveBlending, transparent: true, opacity:0.1 });
 	var plane = new THREE.Mesh(geometry, material);
 	plane.rotation.set(-Math.PI / 2, 0, 0);
 	plane.position.set( 0, -80, 0);

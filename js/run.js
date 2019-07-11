@@ -7,8 +7,7 @@ function update() {
 	if (!sceneSettings.pause) {
 
 		var deltaTime = clock.getDelta();
-		// cameraCtrl.update();
-		neuralNet.meshComponents.rotation.y -= Math.PI / 180 / 8;
+		// neuralNet.meshComponents.rotation.y -= Math.PI / 180 / 8;
 		neuralNet.update(deltaTime);
 		updateGuiInfo();
 

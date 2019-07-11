@@ -38,7 +38,8 @@ function NeuralNetwork() {
 	this.components = {
 		neurons: [],
 		allSignals: [],
-		allAxons: []
+		allAxons: [],
+		allComments: []
 	};
 
 	// axon
@@ -112,6 +113,71 @@ function NeuralNetwork() {
 
 	});
 
+	//Context box
+	var conboxMaterial = new THREE.LineBasicMaterial({
+		color: 0x666600,
+		linewidth: 1,
+
+	});
+	this.conboxRoot = new THREE.Object3D();
+	var conboxGeometry = new THREE.Geometry();
+	//
+	// Cube geometry
+	//
+	//   4+--------+7
+	//   /|       /|
+	// 5+--------+6|
+	//  | |      | |
+	//  |0+------|-+3
+	//  |/       |/
+	// 1+--------+2
+	//
+	var cube_vertices = [
+		[-0.5, -0.5, -0.5],
+		[0.5, -0.5, -0.5],
+		[0.5, 0.5, -0.5],
+		[-0.5, 0.5, -0.5],
+		[-0.5, -0.5, 0.5],
+		[0.5, -0.5, 0.5],
+		[0.5, 0.5, 0.5],
+		[-0.5, 0.5, 0.5]
+	];
+	var cube_edges = [
+		[0, 1],
+		[1, 2],
+		[2, 3],
+		[3, 0],
+		[0, 4],
+		[4, 5],
+		[5, 6],
+		[6, 7],
+		[7, 4],
+		[4, 7],
+		[7, 3],
+		[3, 2],
+		[2, 6],
+		[6, 5],
+		[5, 1]
+	];
+	for (var ii = 0; ii < cube_edges.length; ii++) {
+		// Add first vertex of edge
+		conboxGeometry.vertices.push(new THREE.Vector3(
+			cube_vertices[cube_edges[ii][0]][0],
+			cube_vertices[cube_edges[ii][0]][1],
+			cube_vertices[cube_edges[ii][0]][2]
+		)
+		);
+		// Add second vertex of edge
+		conboxGeometry.vertices.push(new THREE.Vector3(
+			cube_vertices[cube_edges[ii][1]][0],
+			cube_vertices[cube_edges[ii][1]][1],
+			cube_vertices[cube_edges[ii][1]][2]
+		)
+		);
+	}
+	this.conboxMesh = new THREE.Line(conboxGeometry, conboxMaterial);
+
+
 	// info api
 	this.numNeurons = 0;
 	this.numAxons = 0;
@@ -130,6 +196,7 @@ NeuralNetwork.prototype.initNeuralNetwork = function () {
 
 	this.initNeurons(OBJ_MODELS.brain.geometry.vertices);
 	this.initAxons();
+	this.initConboxes();
 
 	this.neuronShaderMaterial.vertexShader = SHADER_CONTAINER.neuronVert;
 	this.neuronShaderMaterial.fragmentShader = SHADER_CONTAINER.neuronFrag;
@@ -222,6 +289,20 @@ NeuralNetwork.prototype.initAxons = function () {
 
 };
 
+
+NeuralNetwork.prototype.initConboxes = function () {
+
+	for (var i = 0; i < DATASET.length; i++) {
+		var pos = new THREE.Vector3(DATASET[i].x - 126 / 2 + 0.5, DATASET[i].y - 116 / 2 + 0.5, DATASET[i].z - 156 / 2 + 0.5);
+		var conbox = new Conbox(i, pos, DATASET[i].visible, DATASET[i].label, DATASET[i].signals);
+		var box = this.conboxMesh.clone();
+		conbox.component.add(box);
+		this.conboxRoot.add(conbox.component);
+		this.components.allComments.push(conbox.comment);
+	}
+	this.meshComponents.add(this.conboxRoot);
+};
+
 NeuralNetwork.prototype.update = function (deltaTime) {
 
 	if (!this.initialized) return;
@@ -281,6 +362,11 @@ NeuralNetwork.prototype.update = function (deltaTime) {
 			}
 		}
 
+	}
+
+	// update position of comment
+	for (var ii = 0; ii < this.components.allComments.length; ii++) {
+		this.components.allComments[ii].updatePosition();
 	}
 
 	// update particle pool vertices

@@ -19,26 +19,14 @@ var sceneSettings = {
 
 	pause: false,
 	bgColor: 0x111113,
-	enableGridHelper: false,
-	enableAxisHelper: false
+	enableGridHelper: true,
+	enableAxisHelper: true
 
 };
 
 // ---- Scene
 container = document.getElementById('canvas-container');
 scene = new THREE.Scene();
-
-// ---- Camera
-camera = new THREE.PerspectiveCamera(75, screenRatio, 10, 5000);
-camera.position.set(0, 150, 0);
-// camera orbit control
-cameraCtrl = new THREE.OrbitControls(camera, container);
-// cameraCtrl.object.position.z = 150;
-// cameraCtrl.object.position.x = 150;
-cameraCtrl.autoRotate = false;
-cameraCtrl.autoRotateSpeed = 1;
-cameraCtrl.enablePan = false;
-cameraCtrl.enableRotate = false;
 
 // ---- Renderer
 renderer = new THREE.WebGLRenderer({
@@ -55,21 +43,41 @@ container.appendChild(renderer.domElement);
 stats = new Stats();
 container.appendChild(stats.domElement);
 
+// ---- Camera
+camera = new THREE.PerspectiveCamera(75, screenRatio, 0.1, 1000);
+camera.position.set(0, 150, 0);
+// camera orbit control
+cameraCtrl = new THREE.OrbitControls(camera, renderer.domElement);
+// cameraCtrl.object.position.z = 150;
+// cameraCtrl.object.position.x = 150;
+cameraCtrl.autoRotate = false;
+cameraCtrl.autoRotateSpeed = 1;
+cameraCtrl.enablePan = false;
+cameraCtrl.enableRotate = false;
+
+
+
 // ---- grid & axis helper
-var gridHelper = new THREE.GridHelper(600, 50);
+var gridHelper = new THREE.GridHelper(78, 1);
 gridHelper.setColors(0x00bbff, 0xffffff);
-gridHelper.material.opacity = 0.1;
+gridHelper.material.opacity = 0.05;
 gridHelper.material.transparent = true;
-gridHelper.position.y = -300;
+gridHelper.position.y = -116 / 2;
 scene.add(gridHelper);
 
-var axisHelper = new THREE.AxisHelper(50);
+var axisHelper = new THREE.AxisHelper(156);
+axisHelper.position.x = -126 / 2;
+axisHelper.position.y = -116 / 2;
+axisHelper.position.z = -156 / 2;
+
 scene.add(axisHelper);
 
 function updateHelpers() {
 	axisHelper.visible = sceneSettings.enableAxisHelper;
 	gridHelper.visible = sceneSettings.enableGridHelper;
 }
+
+
 
 /*
 // ---- Lights
@@ -88,3 +96,4 @@ light = new THREE.AmbientLight( 0x111111 );
 scene.add( light );
 */
 
+var comments = [];

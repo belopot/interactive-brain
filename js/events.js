@@ -45,6 +45,7 @@ function onWindowResize() {
 	camera.updateProjectionMatrix();
 
 	renderer.setSize( WIDTH, HEIGHT );
+	labelRenderer.setSize( WIDTH, HEIGHT );
 	renderer.setPixelRatio( pixelRatio );
 
 }

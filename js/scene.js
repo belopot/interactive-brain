@@ -58,17 +58,21 @@ cameraCtrl.enableRotate = false;
 
 
 // ---- grid & axis helper
-var gridHelper = new THREE.GridHelper(78, 1);
+var brainSizeX = 125;
+var brainSizeY = 115;
+var brainSizeZ = 155;
+var contextBoxSize = 5;
+var gridHelper = new THREE.GridHelper(brainSizeZ/2, contextBoxSize);
 gridHelper.setColors(0x00bbff, 0xffffff);
 gridHelper.material.opacity = 0.05;
 gridHelper.material.transparent = true;
-gridHelper.position.y = -116 / 2;
+gridHelper.position.y = -brainSizeY / 2;
 scene.add(gridHelper);
 
-var axisHelper = new THREE.AxisHelper(156);
-axisHelper.position.x = -126 / 2;
-axisHelper.position.y = -116 / 2;
-axisHelper.position.z = -156 / 2;
+var axisHelper = new THREE.AxisHelper(brainSizeZ);
+axisHelper.position.x = -brainSizeX / 2;
+axisHelper.position.y = -brainSizeY / 2;
+axisHelper.position.z = -brainSizeZ / 2;
 
 scene.add(axisHelper);
 

@@ -115,7 +115,7 @@ function NeuralNetwork() {
 
 	//Context box
 	var conboxMaterial = new THREE.LineBasicMaterial({
-		color: 0x666600,
+		color: 0x009faf,
 		linewidth: 1,
 
 	});
@@ -133,14 +133,14 @@ function NeuralNetwork() {
 	// 1+--------+2
 	//
 	var cube_vertices = [
-		[-0.5, -0.5, -0.5],
-		[0.5, -0.5, -0.5],
-		[0.5, 0.5, -0.5],
-		[-0.5, 0.5, -0.5],
-		[-0.5, -0.5, 0.5],
-		[0.5, -0.5, 0.5],
-		[0.5, 0.5, 0.5],
-		[-0.5, 0.5, 0.5]
+		[-contextBoxSize/2, -contextBoxSize/2, -contextBoxSize/2],
+		[contextBoxSize/2, -contextBoxSize/2, -contextBoxSize/2],
+		[contextBoxSize/2, contextBoxSize/2, -contextBoxSize/2],
+		[-contextBoxSize/2, contextBoxSize/2, -contextBoxSize/2],
+		[-contextBoxSize/2, -contextBoxSize/2, contextBoxSize/2],
+		[contextBoxSize/2, -contextBoxSize/2, contextBoxSize/2],
+		[contextBoxSize/2, contextBoxSize/2, contextBoxSize/2],
+		[-contextBoxSize/2, contextBoxSize/2, contextBoxSize/2]
 	];
 	var cube_edges = [
 		[0, 1],
@@ -184,8 +184,6 @@ function NeuralNetwork() {
 	this.numSignals = 0;
 
 	this.numPassive = 0;
-
-
 
 	// initialize NN
 	this.initNeuralNetwork();
@@ -293,7 +291,7 @@ NeuralNetwork.prototype.initAxons = function () {
 NeuralNetwork.prototype.initConboxes = function () {
 
 	for (var i = 0; i < DATASET.length; i++) {
-		var pos = new THREE.Vector3(DATASET[i].x - 126 / 2 + 0.5, DATASET[i].y - 116 / 2 + 0.5, DATASET[i].z - 156 / 2 + 0.5);
+		var pos = new THREE.Vector3(DATASET[i].x * contextBoxSize - brainSizeX / 2 + contextBoxSize/2, DATASET[i].y * contextBoxSize - brainSizeY / 2 + contextBoxSize/2, DATASET[i].z * contextBoxSize - brainSizeZ / 2 + contextBoxSize/2);
 		var conbox = new Conbox(i, pos, DATASET[i].visible, DATASET[i].label, DATASET[i].signals);
 		var box = this.conboxMesh.clone();
 		conbox.component.add(box);

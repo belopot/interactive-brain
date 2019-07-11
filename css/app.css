@@ -109,4 +109,5 @@ a, a:visited {
 	/* IE 10+ */
 	user-select: none;
 	/* Likely future */
+	text-align: center;
 }

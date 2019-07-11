@@ -27,16 +27,32 @@ var SignalData = [
 	// { context: 2, neuron_id: 3000, interval: 4, size: 1.5 },
 ]
 
+// { context_box: [                     //brain total size {x : 125, y: 115, z: 155} (Based on the size of 3D model)
+// id: int            				    // ID of box
+// x:  int			           	        // index value (0 to 24)
+// y:  int   	         				// index value (0 to 22)
+// z:  int   	         				// index value (0 to 30)
+// visible: boolean,			        // border of the box visible
+// label:  {  
+// 	  visible: boolean		            // label visible
+//    text: string,                    	// label text
+// 	  size: int                         // font size
+// 	  color: #ffffffaa                 	// font color and alpha
+// }
+// signals: [signal1, signal2...]
+// ] }
+
+
 var DATASET = [
 	{
 		id: 0, 
-		x: 0, 
-		y: 0, 
-		z: 0, 
+		x: 12, 
+		y: 22, 
+		z: 15, 
 		visible: true,
-		label: { visible: true, text: "box1", size: '18px', color: '#ffffff44' },
+		label: { visible: true, text: "Top part", size: '18px', color: '#ffffffff' },
 		signals: [
-			{ visible: true, position: { x: 10, y: 10, z: 10 }, interval: 4000, color: '#ff0000', size: 1 }	//first signal
+			{ visible: true, position: { x: 10, y: 22, z: 10 }, interval: 4000, color: '#ff0000', size: 1 }	//first signal
 		]
 	}
 

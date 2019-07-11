@@ -34,7 +34,7 @@ var DATASET = [
 		y: 0, 
 		z: 0, 
 		visible: true,
-		label: { visible: true, text: "box1", size: '22px', color: '#ffffff44' },
+		label: { visible: true, text: "box1", size: '18px', color: '#ffffff44' },
 		signals: [
 			{ visible: true, position: { x: 10, y: 10, z: 10 }, interval: 4000, color: '#ff0000', size: 1 }	//first signal
 		]

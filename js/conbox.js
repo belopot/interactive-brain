@@ -1,9 +1,7 @@
 // Context box ----------------------------------------------------------------
 
-function Conbox(id, pos, visible, label, signals) {
+function Conbox(id, pos, visible, label) {
 	this.id = id;
-
-	this.visible = visible;
 	this.component = new THREE.Object3D();
 	this.component.position.set(pos.x, pos.y, pos.z);
 	this.component.visible = visible;

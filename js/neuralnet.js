@@ -177,6 +177,9 @@ function NeuralNetwork() {
 	}
 	this.conboxMesh = new THREE.Line(conboxGeometry, conboxMaterial);
 
+	//Static Signal
+	this.staticSignals = [];
+
 
 	// info api
 	this.numNeurons = 0;
@@ -184,6 +187,7 @@ function NeuralNetwork() {
 	this.numSignals = 0;
 
 	this.numPassive = 0;
+
 
 	// initialize NN
 	this.initNeuralNetwork();
@@ -291,15 +295,25 @@ NeuralNetwork.prototype.initAxons = function () {
 NeuralNetwork.prototype.initConboxes = function () {
 
 	for (var i = 0; i < DATASET.length; i++) {
-		var pos = new THREE.Vector3(DATASET[i].x * contextBoxSize - brainSizeX / 2 + contextBoxSize/2, DATASET[i].y * contextBoxSize - brainSizeY / 2 + contextBoxSize/2, DATASET[i].z * contextBoxSize - brainSizeZ / 2 + contextBoxSize/2);
-		var conbox = new Conbox(i, pos, DATASET[i].visible, DATASET[i].label, DATASET[i].signals);
+		//Context box
+		var boxPos = new THREE.Vector3(DATASET[i].x * contextBoxSize - brainSizeX / 2 + contextBoxSize/2, DATASET[i].y * contextBoxSize - brainSizeY / 2 + contextBoxSize/2, DATASET[i].z * contextBoxSize - brainSizeZ / 2 + contextBoxSize/2);
+		var conbox = new Conbox(i, boxPos, DATASET[i].visible, DATASET[i].label);
 		var box = this.conboxMesh.clone();
 		conbox.component.add(box);
 		this.conboxRoot.add(conbox.component);
 		this.components.allComments.push(conbox.comment);
+
+		//Static signals
+		for(var j=0; j<DATASET[i].signals.length; j++){
+			var signalInfo = DATASET[i].signals[j];
+			var spos = new THREE.Vector3(boxPos.x - contextBoxSize/2 + signalInfo.position.x * contextBoxSize / 100, boxPos.y - contextBoxSize/2 + signalInfo.position.y * contextBoxSize / 100, boxPos.z - contextBoxSize/2 + signalInfo.position.z * contextBoxSize / 100);
+			var s = new StaticSignal(signalInfo.visible, spos, signalInfo.size, signalInfo.color, signalInfo.interval);
+			this.staticSignals.push(s);
+			this.conboxRoot.add(s.meshComponents);
+		}
 	}
 	this.meshComponents.add(this.conboxRoot);
-};
+};         
 
 NeuralNetwork.prototype.update = function (deltaTime) {
 
@@ -372,6 +386,10 @@ NeuralNetwork.prototype.update = function (deltaTime) {
 		this.particlePools[ii].update();
 	}
 
+	// update Static signals
+	for (var ii = 0; ii < this.staticSignals.length; ii++) {
+		this.staticSignals[ii].update(deltaTime);
+	}
 
 	// update info for GUI
 	this.updateInfo();

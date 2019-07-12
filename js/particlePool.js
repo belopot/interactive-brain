@@ -68,7 +68,6 @@ ParticlePool.prototype.getParticle = function () {
 };
 
 ParticlePool.prototype.update = function () {
-
 	this.pGeom.verticesNeedUpdate = true;
 };
 

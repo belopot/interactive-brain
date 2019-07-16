@@ -35,21 +35,22 @@ renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(WIDTH, HEIGHT);
 renderer.setPixelRatio(pixelRatio);
-renderer.setClearColor(sceneSettings.bgColor, 1);
+// renderer.setClearColor(sceneSettings.bgColor, 1);
+renderer.domElement.style.background = '#' + sceneSettings.bgColor.toString(16);
 renderer.autoClear = false;
 container.appendChild(renderer.domElement);
 
 // ---- Stats
 stats = new Stats();
-container.appendChild(stats.domElement);
+// container.appendChild(stats.domElement);
 
 // ---- Camera
 camera = new THREE.PerspectiveCamera(75, screenRatio, 0.1, 1000);
-camera.position.set(0, 150, 0);
+// camera.position.set(0, 150, 0);
 // camera orbit control
 cameraCtrl = new THREE.OrbitControls(camera, renderer.domElement);
-// cameraCtrl.object.position.z = 150;
-// cameraCtrl.object.position.x = 150;
+cameraCtrl.object.position.z = 100;
+cameraCtrl.object.position.x = 100;
 cameraCtrl.autoRotate = false;
 cameraCtrl.autoRotateSpeed = 1;
 cameraCtrl.enablePan = false;

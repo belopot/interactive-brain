@@ -15,9 +15,9 @@ function NeuralNetwork() {
 		limitSignals           : 10000
 		*/
 
-		verticesSkipStep: 4,
+		verticesSkipStep: 2,
 		maxAxonDist: 10,
-		maxConnectionsPerNeuron: 6,
+		maxConnectionsPerNeuron: 8,
 		signalMinSpeed: 0.35,
 		signalMaxSpeed: 0.85,
 		currentMaxSignals: 1000,
@@ -72,7 +72,7 @@ function NeuralNetwork() {
 	this.neuronSizeMultiplier = 0.4;
 	this.spriteTextureNeuron = TEXTURES.electric;
 	this.neuronColor = '#ffffff';
-	this.neuronOpacity = 0.3;
+	this.neuronOpacity = 0.5;
 	this.neuronsGeom = new THREE.Geometry();
 
 	this.neuronUniforms = {
@@ -196,9 +196,9 @@ function NeuralNetwork() {
 
 NeuralNetwork.prototype.initNeuralNetwork = function () {
 
+	this.initConboxes();
 	this.initNeurons(OBJ_MODELS.brain.geometry.vertices);
 	this.initAxons();
-	this.initConboxes();
 
 	this.neuronShaderMaterial.vertexShader = SHADER_CONTAINER.neuronVert;
 	this.neuronShaderMaterial.fragmentShader = SHADER_CONTAINER.neuronFrag;
@@ -212,17 +212,25 @@ NeuralNetwork.prototype.initNeuralNetwork = function () {
 
 NeuralNetwork.prototype.initNeurons = function (inputVertices) {
 
-	var i;
-	for (i = 0; i < inputVertices.length; i += this.settings.verticesSkipStep) {
+	//Make neuron from model data
+	for (var i = 0; i < inputVertices.length; i += this.settings.verticesSkipStep) {
 		var pos = inputVertices[i];
 		var n = new Neuron(i, pos.x, pos.y, pos.z);
 		this.components.neurons.push(n);
 		this.neuronsGeom.vertices.push(n);
 		// dont set neuron's property here because its skip vertices
 	}
+	//Make neuron from dataset
+	for (var i = 0; i < this.staticSignals.length; i++) {
+		var pos = this.staticSignals[i].meshComponents.position;
+		var n = new Neuron(i, pos.x, pos.y, pos.z);
+		this.components.neurons.push(n);
+		this.neuronsGeom.vertices.push(n);
+	}
+	console.log(this.components.neurons.length)
 
 	// set neuron attributes value
-	for (i = 0; i < this.components.neurons.length; i++) {
+	for (var i = 0; i < this.components.neurons.length; i++) {
 		this.neuronAttributes.color.value[i] = new THREE.Color('#ffffff'); // initial neuron color
 		this.neuronAttributes.size.value[i] = THREE.Math.randFloat(0.75, 3.0); // initial neuron size
 	}

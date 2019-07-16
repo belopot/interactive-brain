@@ -10,7 +10,7 @@ function update() {
 		// neuralNet.meshComponents.rotation.y -= Math.PI / 180 / 8;
 		neuralNet.update(deltaTime);
 		updateGuiInfo();
-
+		cameraCtrl.update();
 	}
 
 }
@@ -19,11 +19,12 @@ function update() {
 function run() {
 
 	requestAnimationFrame(run);
-	renderer.setClearColor(sceneSettings.bgColor, 1);
+	// renderer.setClearColor(sceneSettings.bgColor, 1);
+	
 	renderer.clear();
 	update();
 	renderer.render(scene, camera);
-	stats.update();
+	// stats.update();
 	FRAME_COUNT++;
 
 }

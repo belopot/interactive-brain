@@ -35,8 +35,18 @@ renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(WIDTH, HEIGHT);
 renderer.setPixelRatio(pixelRatio);
-// renderer.setClearColor(sceneSettings.bgColor, 1);
-renderer.domElement.style.background = '#' + sceneSettings.bgColor.toString(16);
+
+//Blending mode
+var currentBlendingMode = THREE.NormalBlending;
+var removeBackgroundScene = false;
+if(removeBackgroundScene){
+	renderer.domElement.style.background = '#' + sceneSettings.bgColor.toString(16);
+}
+else{
+	renderer.setClearColor(sceneSettings.bgColor, 1);
+}
+
+
 renderer.autoClear = false;
 container.appendChild(renderer.domElement);
 
@@ -101,4 +111,5 @@ light = new THREE.AmbientLight( 0x111111 );
 scene.add( light );
 */
 
-var comments = [];
+var g_ActiveNeuronIds = [];
+var g_ActiveAxons = [];

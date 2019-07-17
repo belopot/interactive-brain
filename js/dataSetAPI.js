@@ -5,7 +5,7 @@ var DATASET = [
 		x: 12, 
 		y: 22, 
 		z: 15, 
-		visible: true,
+		visible: false,
 		label: { visible: true, text: "Top_Box", size: '18px', color: '#ff0000ff' },
 		signals: [
 			{ visible: true, position: { x: 0, y: 0, z: 0 }, interval: 4000, color: '#ff0000', size: 1.5 }
@@ -22,17 +22,17 @@ var DATASET = [
 			{ visible: true, position: { x: 10, y: 22, z: 10 }, interval: 2000, color: '#00ff00', size: 1.2 }
 		]
 	},
-	{
-		id: 2, 
-		x: 2, 
-		y: 11, 
-		z: 15, 
-		visible: false,
-		label: { visible: true, text: "Right_Box", size: '18px', color: '#ffff00ff' },
-		signals: [
-			{ visible: true, position: { x: 88, y: 88, z: 88 }, interval: 1500, color: '#ffff00', size: 1.3 },
-		]
-	},
+	// {
+	// 	id: 2, 
+	// 	x: 2, 
+	// 	y: 11, 
+	// 	z: 15, 
+	// 	visible: false,
+	// 	label: { visible: true, text: "Right_Box", size: '18px', color: '#ffff00ff' },
+	// 	signals: [
+	// 		{ visible: true, position: { x: 88, y: 88, z: 88 }, interval: 1000, color: '#ffff00', size: 1.3 },
+	// 	]
+	// },
 	// {
 	// 	id: 3, 
 	// 	x: 22, 

@@ -33,7 +33,8 @@ function initGui() {
 }
 
 function updateNeuralNetworkSettings() {
-	renderer.domElement.style.background = '#' + sceneSettings.bgColor.toString(16);
+	if(removeBackgroundScene)
+		renderer.domElement.style.background = '#' + sceneSettings.bgColor.toString(16);
 	neuralNet.updateSettings();
 	if ( neuralNet.settings.signalMinSpeed > neuralNet.settings.signalMaxSpeed ) {
 		neuralNet.settings.signalMaxSpeed = neuralNet.settings.signalMinSpeed;

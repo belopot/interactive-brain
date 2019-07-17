@@ -26,7 +26,7 @@ function ParticlePool( poolSize, visible, signalSize, signalColor, maxTime ) {
 		map: this.spriteTextureSignal,
 		size: this.pSize,
 		color: this.pColor,
-		blending: THREE.AdditiveBlending,
+		blending: currentBlendingMode,
 		depthTest: false,
 		transparent: true
 	} );

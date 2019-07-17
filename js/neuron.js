@@ -12,8 +12,8 @@ function Neuron( idx, x, y, z ) {
 	this.activeSignalCount = 0;
 	this.signalTimer = 0;
 	this.fireRoot = 0;
+	this.color = "#ffffff";
 	THREE.Vector3.call( this, x, y, z );
-
 }
 
 Neuron.prototype = Object.create( THREE.Vector3.prototype );

@@ -23,7 +23,7 @@ function StaticSignal(signalVisible, signalPos, signalSize, signalColor, signalI
 		map: this.spriteTextureSignal,
 		size: this.pSize,
 		color: this.pColor,
-		blending: THREE.AdditiveBlending,
+		blending: currentBlendingMode,
 		depthTest: false,
 		transparent: true
 	});

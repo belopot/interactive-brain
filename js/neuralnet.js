@@ -16,8 +16,8 @@ function NeuralNetwork() {
 		*/
 
 		verticesSkipStep: 2,
-		maxAxonDist: 10,
-		maxConnectionsPerNeuron: 8,
+		maxAxonDist: 15,
+		maxConnectionsPerNeuron: 10,
 		signalMinSpeed: 0.35,
 		signalMaxSpeed: 0.85,
 		currentMaxSignals: 1000,
@@ -63,6 +63,9 @@ function NeuralNetwork() {
 		}
 	};
 
+	this.activeActionRoot = new THREE.Object3D();
+	this.meshComponents.add(this.activeActionRoot);
+
 	// neuron
 	this.neuronSizeMultiplier = 0.4;
 	this.spriteTextureNeuron = TEXTURES.electric;
@@ -102,7 +105,7 @@ function NeuralNetwork() {
 		attributes: this.neuronAttributes,
 		vertexShader: null,
 		fragmentShader: null,
-		blending: THREE.AdditiveBlending,
+		blending: currentBlendingMode,
 		transparent: true,
 		depthTest: false
 
@@ -211,23 +214,27 @@ NeuralNetwork.prototype.initNeuralNetwork = function () {
 NeuralNetwork.prototype.initNeurons = function (inputVertices) {
 
 	//Make neuron from model data
+	var staticNeuronId = 0;
 	for (var i = 0; i < inputVertices.length; i += this.settings.verticesSkipStep) {
 		var pos = inputVertices[i];
-		var n = new Neuron(i, pos.x, pos.y, pos.z);
+		var n = new Neuron(staticNeuronId++, pos.x, pos.y, pos.z);
 		this.components.neurons.push(n);
 		this.neuronsGeom.vertices.push(n);
 		// dont set neuron's property here because its skip vertices
 	}
+	var staticNeuronCount = this.components.neurons.length;
 	//Make neuron from dataset
 	for (var i = 0; i < this.staticSignals.length; i++) {
+		var neuronId = staticNeuronCount + i;
 		var pos = this.staticSignals[i].meshComponents.position;
-		var n = new Neuron(i, pos.x, pos.y, pos.z);
+		var n = new Neuron(neuronId, pos.x, pos.y, pos.z);
 		this.components.neurons.push(n);
 		this.neuronsGeom.vertices.push(n);
 
 		//Make active signal data 
 		// { idx: 0, neuron_id: 23691, visible:true, interval: 0.5, color: '#ffffff', size: 1 }
-		var signalData = { idx: i, neuron_id: this.components.neurons.length - 1, visible: this.staticSignals[i].signalVisible, interval: this.staticSignals[i].interval / 1000, color: this.staticSignals[i].pColor, size: this.staticSignals[i].signalSize };
+		g_ActiveNeuronIds.push(neuronId);
+		var signalData = { idx: i, neuron_id: neuronId, visible: this.staticSignals[i].signalVisible, interval: this.staticSignals[i].interval / 1000, color: this.staticSignals[i].pColor, size: this.staticSignals[i].signalSize };
 		this.activeSignalData.push(signalData);
 	}
 
@@ -235,6 +242,9 @@ NeuralNetwork.prototype.initNeurons = function (inputVertices) {
 		var pp = new ParticlePool(this.settings.limitSignals, this.activeSignalData[ii].visible, this.activeSignalData[ii].size, this.activeSignalData[ii].color, this.activeSignalData[ii].interval);
 		this.meshComponents.add(pp.meshComponents);
 		this.particlePools.push(pp);
+
+		//Set color in active neuron 
+		this.components.neurons[this.activeSignalData[ii].neuron_id].color = this.activeSignalData[ii].color;
 	}
 
 	// set neuron attributes value
@@ -288,7 +298,7 @@ NeuralNetwork.prototype.initAxons = function () {
 		attributes: this.axonAttributes,
 		vertexShader: null,
 		fragmentShader: null,
-		blending: THREE.AdditiveBlending,
+		blending: currentBlendingMode,
 		depthTest: false,
 		transparent: true
 	});
@@ -305,6 +315,9 @@ NeuralNetwork.prototype.initAxons = function () {
 	}
 	// console.log( 'numNotConnected =', numNotConnected );
 
+	//Add active axon on scene
+	for(i=0; i<g_ActiveAxons.length; i++)
+		this.activeActionRoot.add(g_ActiveAxons[i].component);
 };
 
 

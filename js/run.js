@@ -19,7 +19,8 @@ function update() {
 function run() {
 
 	requestAnimationFrame(run);
-	// renderer.setClearColor(sceneSettings.bgColor, 1);
+	if(!removeBackgroundScene)
+		renderer.setClearColor(sceneSettings.bgColor, 1);
 	
 	renderer.clear();
 	update();

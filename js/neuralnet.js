@@ -27,12 +27,7 @@ function NeuralNetwork() {
 
 	this.meshComponents = new THREE.Object3D();
 
-	this.particlePools = [];
-	for (var ii = 0; ii < SignalData.length; ii++) {
-		var pp = new ParticlePool(this.settings.limitSignals, SignalData[ii].size);
-		this.meshComponents.add(pp.meshComponents);
-		this.particlePools.push(pp);
-	}
+
 
 	// NN component containers
 	this.components = {
@@ -133,14 +128,14 @@ function NeuralNetwork() {
 	// 1+--------+2
 	//
 	var cube_vertices = [
-		[-contextBoxSize/2, -contextBoxSize/2, -contextBoxSize/2],
-		[contextBoxSize/2, -contextBoxSize/2, -contextBoxSize/2],
-		[contextBoxSize/2, contextBoxSize/2, -contextBoxSize/2],
-		[-contextBoxSize/2, contextBoxSize/2, -contextBoxSize/2],
-		[-contextBoxSize/2, -contextBoxSize/2, contextBoxSize/2],
-		[contextBoxSize/2, -contextBoxSize/2, contextBoxSize/2],
-		[contextBoxSize/2, contextBoxSize/2, contextBoxSize/2],
-		[-contextBoxSize/2, contextBoxSize/2, contextBoxSize/2]
+		[-contextBoxSize / 2, -contextBoxSize / 2, -contextBoxSize / 2],
+		[contextBoxSize / 2, -contextBoxSize / 2, -contextBoxSize / 2],
+		[contextBoxSize / 2, contextBoxSize / 2, -contextBoxSize / 2],
+		[-contextBoxSize / 2, contextBoxSize / 2, -contextBoxSize / 2],
+		[-contextBoxSize / 2, -contextBoxSize / 2, contextBoxSize / 2],
+		[contextBoxSize / 2, -contextBoxSize / 2, contextBoxSize / 2],
+		[contextBoxSize / 2, contextBoxSize / 2, contextBoxSize / 2],
+		[-contextBoxSize / 2, contextBoxSize / 2, contextBoxSize / 2]
 	];
 	var cube_edges = [
 		[0, 1],
@@ -180,6 +175,8 @@ function NeuralNetwork() {
 	//Static Signal
 	this.staticSignals = [];
 
+	this.activeSignalData = [];
+
 
 	// info api
 	this.numNeurons = 0;
@@ -188,6 +185,7 @@ function NeuralNetwork() {
 
 	this.numPassive = 0;
 
+	this.particlePools = [];
 
 	// initialize NN
 	this.initNeuralNetwork();
@@ -226,8 +224,18 @@ NeuralNetwork.prototype.initNeurons = function (inputVertices) {
 		var n = new Neuron(i, pos.x, pos.y, pos.z);
 		this.components.neurons.push(n);
 		this.neuronsGeom.vertices.push(n);
+
+		//Make active signal data 
+		// { idx: 0, neuron_id: 23691, visible:true, interval: 0.5, color: '#ffffff', size: 1 }
+		var signalData = { idx: i, neuron_id: this.components.neurons.length - 1, visible: this.staticSignals[i].signalVisible, interval: this.staticSignals[i].interval / 1000, color: this.staticSignals[i].pColor, size: this.staticSignals[i].signalSize };
+		this.activeSignalData.push(signalData);
 	}
-	console.log(this.components.neurons.length)
+
+	for (var ii = 0; ii < this.activeSignalData.length; ii++) {
+		var pp = new ParticlePool(this.settings.limitSignals, this.activeSignalData[ii].visible, this.activeSignalData[ii].size, this.activeSignalData[ii].color, this.activeSignalData[ii].interval);
+		this.meshComponents.add(pp.meshComponents);
+		this.particlePools.push(pp);
+	}
 
 	// set neuron attributes value
 	for (var i = 0; i < this.components.neurons.length; i++) {
@@ -301,10 +309,11 @@ NeuralNetwork.prototype.initAxons = function () {
 
 
 NeuralNetwork.prototype.initConboxes = function () {
+	
 
 	for (var i = 0; i < DATASET.length; i++) {
 		//Context box
-		var boxPos = new THREE.Vector3(DATASET[i].x * contextBoxSize - brainSizeX / 2 + contextBoxSize/2, DATASET[i].y * contextBoxSize - brainSizeY / 2 + contextBoxSize/2, DATASET[i].z * contextBoxSize - brainSizeZ / 2 + contextBoxSize/2);
+		var boxPos = new THREE.Vector3(DATASET[i].x * contextBoxSize - brainSizeX / 2 + contextBoxSize / 2, DATASET[i].y * contextBoxSize - brainSizeY / 2 + contextBoxSize / 2, DATASET[i].z * contextBoxSize - brainSizeZ / 2 + contextBoxSize / 2);
 		var conbox = new Conbox(i, boxPos, DATASET[i].visible, DATASET[i].label);
 		var box = this.conboxMesh.clone();
 		conbox.component.add(box);
@@ -312,16 +321,18 @@ NeuralNetwork.prototype.initConboxes = function () {
 		this.components.allComments.push(conbox.comment);
 
 		//Static signals
-		for(var j=0; j<DATASET[i].signals.length; j++){
+		for (var j = 0; j < DATASET[i].signals.length; j++) {
 			var signalInfo = DATASET[i].signals[j];
-			var spos = new THREE.Vector3(boxPos.x - contextBoxSize/2 + signalInfo.position.x * contextBoxSize / 100, boxPos.y - contextBoxSize/2 + signalInfo.position.y * contextBoxSize / 100, boxPos.z - contextBoxSize/2 + signalInfo.position.z * contextBoxSize / 100);
+			var spos = new THREE.Vector3(boxPos.x - contextBoxSize / 2 + signalInfo.position.x * contextBoxSize / 100, boxPos.y - contextBoxSize / 2 + signalInfo.position.y * contextBoxSize / 100, boxPos.z - contextBoxSize / 2 + signalInfo.position.z * contextBoxSize / 100);
 			var s = new StaticSignal(signalInfo.visible, spos, signalInfo.size, signalInfo.color, signalInfo.interval);
 			this.staticSignals.push(s);
 			this.conboxRoot.add(s.meshComponents);
+
+
 		}
 	}
 	this.meshComponents.add(this.conboxRoot);
-};         
+};
 
 NeuralNetwork.prototype.update = function (deltaTime) {
 
@@ -358,11 +369,11 @@ NeuralNetwork.prototype.update = function (deltaTime) {
 	// }
 
 
-	for (var ii = 0; ii < SignalData.length; ii++) {
-		this.components.neurons[SignalData[ii].neuron_id].signalTimer += deltaTime;
-		if (this.components.neurons[SignalData[ii].neuron_id].signalCount === 0 && this.components.neurons[SignalData[ii].neuron_id].signalTimer > SignalData[ii].interval) {
-			this.components.neurons[SignalData[ii].neuron_id].reset();
-			this.releaseSignalAt(SignalData[ii].idx, this.components.neurons[SignalData[ii].neuron_id]);
+	for (var ii = 0; ii < this.activeSignalData.length; ii++) {
+		this.components.neurons[this.activeSignalData[ii].neuron_id].signalTimer += deltaTime;
+		if (this.components.neurons[this.activeSignalData[ii].neuron_id].activeSignalCount === 0 && this.components.neurons[this.activeSignalData[ii].neuron_id].signalTimer > this.activeSignalData[ii].interval) {
+			this.components.neurons[this.activeSignalData[ii].neuron_id].reset();
+			this.releaseSignalAt(this.activeSignalData[ii].idx, this.components.neurons[this.activeSignalData[ii].neuron_id]);
 		}
 	}
 
@@ -396,7 +407,7 @@ NeuralNetwork.prototype.update = function (deltaTime) {
 
 	// update Static signals
 	for (var ii = 0; ii < this.staticSignals.length; ii++) {
-		this.staticSignals[ii].update(deltaTime);
+		//this.staticSignals[ii].update(deltaTime);
 	}
 
 	// update info for GUI

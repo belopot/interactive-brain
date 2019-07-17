@@ -7,13 +7,14 @@ function StaticSignal(signalVisible, signalPos, signalSize, signalColor, signalI
 	this.pGeom = new THREE.Geometry();
 	this.particles = this.pGeom.vertices;
 
-
+	this.signalSize = signalSize; 
 	this.pColor = signalColor;
-	this.pSize = 4 * signalSize;
+	this.pSize = 3.5 * signalSize;
 
 	this.particles[0] = new THREE.Vector3(0,0,0);
 
 	this.meshComponents = new THREE.Object3D();
+	this.signalVisible = signalVisible;
 	this.meshComponents.visible = signalVisible;
 	this.meshComponents.position.set(signalPos.x, signalPos.y, signalPos.z);
 

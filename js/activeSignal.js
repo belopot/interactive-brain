@@ -1,6 +1,6 @@
-// Signal extends THREE.Vector3 ----------------------------------------------------------------
+// ActiveSignal extends THREE.Vector3 ----------------------------------------------------------------
 
-function Signal( particlePool, minSpeed, maxSpeed ) {
+function ActiveSignal( particlePool, minSpeed, maxSpeed ) {
 
 	this.minSpeed = minSpeed;
 	this.maxSpeed = maxSpeed;
@@ -13,9 +13,9 @@ function Signal( particlePool, minSpeed, maxSpeed ) {
 	THREE.Vector3.call( this );
 }
 
-Signal.prototype = Object.create( THREE.Vector3.prototype );
+ActiveSignal.prototype = Object.create( THREE.Vector3.prototype );
 
-Signal.prototype.setConnection = function ( Connection ) {
+ActiveSignal.prototype.setConnection = function ( Connection ) {
 
 	this.startingPoint = Connection.startingPoint;
 	this.axon = Connection.axon;
@@ -24,7 +24,7 @@ Signal.prototype.setConnection = function ( Connection ) {
 
 };
 
-Signal.prototype.travel = function ( deltaTime ) {
+ActiveSignal.prototype.travel = function ( deltaTime ) {
 
 	var pos;
 	if ( this.startingPoint === 'A' ) {
@@ -32,7 +32,7 @@ Signal.prototype.travel = function ( deltaTime ) {
 		if ( this.t >= 1 ) {
 			this.t = 1;
 			this.alive = false;
-			this.axon.neuronA.signalCount--;
+			this.axon.neuronA.activeSignalCount--;
 			this.axon.neuronB.receivedSignal = true;
 			this.axon.neuronB.prevReleaseAxon = this.axon;
 		}
@@ -42,7 +42,7 @@ Signal.prototype.travel = function ( deltaTime ) {
 		if ( this.t <= 0 ) {
 			this.t = 0;
 			this.alive = false;
-			this.axon.neuronB.signalCount--;
+			this.axon.neuronB.activeSignalCount--;
 			this.axon.neuronA.receivedSignal = true;
 			this.axon.neuronA.prevReleaseAxon = this.axon;
 		}

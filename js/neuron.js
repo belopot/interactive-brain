@@ -9,7 +9,7 @@ function Neuron( idx, x, y, z ) {
 	this.fired = false;
 	this.firedCount = 0;
 	this.prevReleaseAxon = null;
-	this.signalCount = 0;
+	this.activeSignalCount = 0;
 	this.signalTimer = 0;
 	this.fireRoot = 0;
 	THREE.Vector3.call( this, x, y, z );
@@ -38,12 +38,12 @@ Neuron.prototype.createSignal = function ( particlePool, minSpeed, maxSpeed ) {
 	// create signal to all connected axons
 	for ( var i = 0; i < this.connection.length; i++ ) {
 		if ( this.connection[ i ].axon !== this.prevReleaseAxon ) {
-			var c = new Signal( particlePool, minSpeed, maxSpeed );
+			var c = new ActiveSignal( particlePool, minSpeed, maxSpeed );
 			c.setConnection( this.connection[ i ] );
 			signals.push( c );
 		}
 	}
-	this.signalCount = signals.length;
+	this.activeSignalCount = signals.length;
 	return signals;
 
 };
@@ -55,6 +55,6 @@ Neuron.prototype.reset = function () {
 	this.releaseDelay = 0;
 	this.fired = false;
 	this.firedCount = 0;
-	this.signalCount = 0;
+	this.activeSignalCount = 0;
 	this.signalTimer = 0;
 };

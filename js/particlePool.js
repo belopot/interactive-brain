@@ -1,7 +1,6 @@
 // Particle Pool ---------------------------------------------------------
 
-function ParticlePool( poolSize, signalSize ) {
-
+function ParticlePool( poolSize, visible, signalSize, signalColor, maxTime ) {
 	this.spriteTextureSignal = TEXTURES.electric;
 
 	this.poolSize = poolSize;
@@ -10,14 +9,17 @@ function ParticlePool( poolSize, signalSize ) {
 
 	this.offScreenPos = new THREE.Vector3( 9999, 9999, 9999 );
 
-	this.pColor = '#ff0000';
+	this.pColor = signalColor;
 	this.pSize = 2 * signalSize;
+
+	this.maxTime = maxTime;
+	this.minTime = maxTime / 2;
 
 	for ( var ii = 0; ii < this.poolSize; ii++ ) {
 		this.particles[ ii ] = new Particle( this );
 	}
-
 	this.meshComponents = new THREE.Object3D();
+	this.meshComponents.visible = visible;
 
 	// inner particle
 	this.pMat = new THREE.PointCloudMaterial( {

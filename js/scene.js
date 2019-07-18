@@ -112,4 +112,5 @@ scene.add( light );
 */
 
 var g_ActiveNeuronIds = [];
+var g_Intervals = [];
 var g_ActiveAxons = [];

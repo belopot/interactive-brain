@@ -8,13 +8,19 @@ function Axon(neuronA, neuronB) {
 	this.cpLength = neuronA.distanceTo(neuronB) / THREE.Math.randFloat(1.5, 4.0);
 	this.controlPointA = this.getControlPoint(neuronA, neuronB);
 	this.controlPointB = this.getControlPoint(neuronB, neuronA);
+	this.startNeuronIdx = neuronB.idx;
+	this.endNeuronIdx = neuronA.idx;
 	THREE.CubicBezierCurve3.call(this, this.neuronA, this.controlPointA, this.controlPointB, this.neuronB);
 
 	this.vertices = this.getSubdividedVertices();
+	this.axonLength = 0;
+	if(this.vertices.length >= 2){
+		this.axonLength = this.vertices[0].distanceTo(this.vertices[1]) * this.bezierSubdivision;
+	}
 	//Active Axon
 	for (var i = 0; i < g_ActiveNeuronIds.length; i++) {
 		if (neuronB.idx === g_ActiveNeuronIds[i]) {
-			var activeAxon = new ActiveAxon(this.neuronA, this.controlPointA, this.controlPointB, this.neuronB, this.bezierSubdivision);
+			var activeAxon = new ActiveAxon(this.neuronA, this.controlPointA, this.controlPointB, this.neuronB, this.bezierSubdivision, g_Intervals[i]);
 			g_ActiveAxons.push(activeAxon);
 		}
 	}

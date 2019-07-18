@@ -42,7 +42,7 @@ shaderLoader.loadMultiple( SHADER_CONTAINER, {
 	neuronFrag: 'shaders/neuron.frag',
 
 	axonVert: 'shaders/axon.vert',
-	axonFrag: 'shaders/axon.frag'
+	axonFrag: 'shaders/axon.frag',
 
 } );
 

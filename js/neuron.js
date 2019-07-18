@@ -29,7 +29,7 @@ Neuron.prototype.connectNeuronTo = function ( neuronB ) {
 
 };
 
-Neuron.prototype.createSignal = function ( particlePool, minSpeed, maxSpeed ) {
+Neuron.prototype.createSignal = function ( particlePool ) {
 
 	this.firedCount += 1;
 	this.receivedSignal = false;
@@ -38,7 +38,7 @@ Neuron.prototype.createSignal = function ( particlePool, minSpeed, maxSpeed ) {
 	// create signal to all connected axons
 	for ( var i = 0; i < this.connection.length; i++ ) {
 		if ( this.connection[ i ].axon !== this.prevReleaseAxon ) {
-			var c = new ActiveSignal( particlePool, minSpeed, maxSpeed );
+			var c = new ActiveSignal( particlePool, this.connection[ i ].axon.axonLength );
 			c.setConnection( this.connection[ i ] );
 			signals.push( c );
 		}

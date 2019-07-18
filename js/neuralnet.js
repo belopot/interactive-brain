@@ -9,8 +9,6 @@ function NeuralNetwork() {
 		verticesSkipStep       : 2,
 		maxAxonDist            : 10,
 		maxConnectionsPerNeuron: 6,
-		signalMinSpeed         : 1.75,
-		signalMaxSpeed         : 3.25,
 		currentMaxSignals      : 3000,
 		limitSignals           : 10000
 		*/
@@ -18,8 +16,6 @@ function NeuralNetwork() {
 		verticesSkipStep: 2,
 		maxAxonDist: 15,
 		maxConnectionsPerNeuron: 10,
-		signalMinSpeed: 0.35,
-		signalMaxSpeed: 0.85,
 		currentMaxSignals: 1000,
 		limitSignals: 3000
 
@@ -234,6 +230,7 @@ NeuralNetwork.prototype.initNeurons = function (inputVertices) {
 		//Make active signal data 
 		// { idx: 0, neuron_id: 23691, visible:true, interval: 0.5, color: '#ffffff', size: 1 }
 		g_ActiveNeuronIds.push(neuronId);
+		g_Intervals.push(this.staticSignals[i].interval / 1000);
 		var signalData = { idx: i, neuron_id: neuronId, visible: this.staticSignals[i].signalVisible, interval: this.staticSignals[i].interval / 1000, color: this.staticSignals[i].pColor, size: this.staticSignals[i].signalSize };
 		this.activeSignalData.push(signalData);
 	}
@@ -283,6 +280,7 @@ NeuralNetwork.prototype.initAxons = function () {
 	if (!renderer.getContext().getExtension("OES_element_index_uint")) {
 		console.error("32bit index buffer not supported!");
 	}
+
 
 	var axonIndices = new Uint32Array(this.axonIndices);
 	var axonPositions = new Float32Array(this.axonPositions);
@@ -384,7 +382,7 @@ NeuralNetwork.prototype.update = function (deltaTime) {
 
 	for (var ii = 0; ii < this.activeSignalData.length; ii++) {
 		this.components.neurons[this.activeSignalData[ii].neuron_id].signalTimer += deltaTime;
-		if (this.components.neurons[this.activeSignalData[ii].neuron_id].activeSignalCount === 0 && this.components.neurons[this.activeSignalData[ii].neuron_id].signalTimer > this.activeSignalData[ii].interval) {
+		if ( this.components.neurons[this.activeSignalData[ii].neuron_id].signalTimer > this.activeSignalData[ii].interval) { //this.components.neurons[this.activeSignalData[ii].neuron_id].activeSignalCount === 0 &&
 			this.components.neurons[this.activeSignalData[ii].neuron_id].reset();
 			this.releaseSignalAt(this.activeSignalData[ii].idx, this.components.neurons[this.activeSignalData[ii].neuron_id]);
 		}
@@ -423,6 +421,11 @@ NeuralNetwork.prototype.update = function (deltaTime) {
 		//this.staticSignals[ii].update(deltaTime);
 	}
 
+	// update Static signals
+	for (var ii = 0; ii < g_ActiveAxons.length; ii++) {
+		g_ActiveAxons[ii].update(deltaTime);
+	}
+
 	// update info for GUI
 	this.updateInfo();
 
@@ -450,7 +453,7 @@ NeuralNetwork.prototype.constructAxonArrayBuffer = function (axon) {
 };
 
 NeuralNetwork.prototype.releaseSignalAt = function (signal_idx, neuron) {
-	var signals = neuron.createSignal(this.particlePools[signal_idx], this.settings.signalMinSpeed, this.settings.signalMaxSpeed);
+	var signals = neuron.createSignal(this.particlePools[signal_idx]);
 	for (var ii = 0; ii < signals.length; ii++) {
 		var s = signals[ii];
 		this.components.allSignals.push(s);

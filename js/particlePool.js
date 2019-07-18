@@ -1,6 +1,6 @@
 // Particle Pool ---------------------------------------------------------
 
-function ParticlePool( poolSize, visible, signalSize, signalColor, maxTime ) {
+function ParticlePool( poolSize, visible, signalSize, signalColor, interval ) {
 	this.spriteTextureSignal = TEXTURES.electric;
 
 	this.poolSize = poolSize;
@@ -12,8 +12,7 @@ function ParticlePool( poolSize, visible, signalSize, signalColor, maxTime ) {
 	this.pColor = signalColor;
 	this.pSize = 2 * signalSize;
 
-	this.maxTime = maxTime;
-	this.minTime = maxTime / 2;
+	this.interval = interval;
 
 	for ( var ii = 0; ii < this.poolSize; ii++ ) {
 		this.particles[ ii ] = new Particle( this );

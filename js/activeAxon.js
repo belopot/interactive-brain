@@ -2,7 +2,7 @@
 /* exported Active Axon, Connection */
 
 
-function ActiveAxon(neuronA, controlPointA, controlPointB, neuronB, bezierSubdivision, interval) {
+function ActiveAxon(neuronA, controlPointA, controlPointB, neuronB, bezierSubdivision, interval, axon_effect) {
     var curve = new THREE.CubicBezierCurve3(
         neuronA,
         controlPointA,
@@ -78,16 +78,20 @@ function ActiveAxon(neuronA, controlPointA, controlPointB, neuronB, bezierSubdiv
 
     this.disappear = false;
     this.oIdx = axonOpacities.length - 1;
+
+    this.axon_effect = axon_effect;
 }
 
 ActiveAxon.prototype.update = function (deltaTime) {
-    this.component.geometry.attributes.opacity.needsUpdate = true;
-    var opacity = this.component.geometry.attributes.opacity.array;
-    if (this.disappear) {
-        opacity[this.oIdx--] = 0;
-        if (this.oIdx < 0) {
-            this.oIdx = opacity.length - 1;
-            this.disappear = false;
+    if(this.axon_effect === "show"){
+        this.component.geometry.attributes.opacity.needsUpdate = true;
+        var opacity = this.component.geometry.attributes.opacity.array;
+        if (this.disappear) {
+            opacity[this.oIdx--] = 0;
+            if (this.oIdx < 0) {
+                this.oIdx = opacity.length - 1;
+                this.disappear = false;
+            }
         }
     }
 }; 

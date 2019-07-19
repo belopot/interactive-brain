@@ -1,6 +1,6 @@
 // Static Signal ---------------------------------------------------------
 
-function StaticSignal(signalVisible, signalPos, signalSize, signalColor, signalInterval) {
+function StaticSignal(signalVisible, signalPos, signalSize, signalColor, signalInterval, axon_effect) {
 
 	this.spriteTextureSignal = TEXTURES.electric;
 
@@ -46,6 +46,9 @@ function StaticSignal(signalVisible, signalPos, signalSize, signalColor, signalI
 
 	this.interval = signalInterval;
 	this.timer = 0;
+
+	this.axon_effect = axon_effect;
+
 }
 
 StaticSignal.prototype.getAvgExecutionTime = function () {

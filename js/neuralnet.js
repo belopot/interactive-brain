@@ -213,7 +213,7 @@ NeuralNetwork.prototype.initNeurons = function (inputVertices) {
 	var staticNeuronId = 0;
 	for (var i = 0; i < inputVertices.length; i += this.settings.verticesSkipStep) {
 		var pos = inputVertices[i];
-		var n = new Neuron(staticNeuronId++, pos.x, pos.y, pos.z);
+		var n = new Neuron(staticNeuronId++, pos.x, pos.y, pos.z, null);
 		this.components.neurons.push(n);
 		this.neuronsGeom.vertices.push(n);
 		// dont set neuron's property here because its skip vertices
@@ -223,7 +223,7 @@ NeuralNetwork.prototype.initNeurons = function (inputVertices) {
 	for (var i = 0; i < this.staticSignals.length; i++) {
 		var neuronId = staticNeuronCount + i;
 		var pos = this.staticSignals[i].meshComponents.position;
-		var n = new Neuron(neuronId, pos.x, pos.y, pos.z);
+		var n = new Neuron(neuronId, pos.x, pos.y, pos.z, this.staticSignals[i].axon_effect);
 		this.components.neurons.push(n);
 		this.neuronsGeom.vertices.push(n);
 
@@ -335,7 +335,7 @@ NeuralNetwork.prototype.initConboxes = function () {
 		for (var j = 0; j < DATASET[i].signals.length; j++) {
 			var signalInfo = DATASET[i].signals[j];
 			var spos = new THREE.Vector3(boxPos.x - contextBoxSize / 2 + signalInfo.position.x * contextBoxSize / 100, boxPos.y - contextBoxSize / 2 + signalInfo.position.y * contextBoxSize / 100, boxPos.z - contextBoxSize / 2 + signalInfo.position.z * contextBoxSize / 100);
-			var s = new StaticSignal(signalInfo.visible, spos, signalInfo.size, signalInfo.color, signalInfo.interval);
+			var s = new StaticSignal(signalInfo.visible, spos, signalInfo.size, signalInfo.color, signalInfo.interval, signalInfo.axon_effect);
 			this.staticSignals.push(s);
 			this.conboxRoot.add(s.meshComponents);
 

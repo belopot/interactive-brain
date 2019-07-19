@@ -1,6 +1,6 @@
 // Neuron ----------------------------------------------------------------
 
-function Neuron( idx, x, y, z ) {
+function Neuron( idx, x, y, z, axon_effect ) {
 	this.idx = idx;
 	this.connection = [];
 	this.receivedSignal = false;
@@ -13,6 +13,7 @@ function Neuron( idx, x, y, z ) {
 	this.signalTimer = 0;
 	this.fireRoot = 0;
 	this.color = "#ffffff";
+	this.axon_effect = axon_effect;
 	THREE.Vector3.call( this, x, y, z );
 }
 
@@ -154,7 +155,7 @@ ActiveSignal.prototype.travel = function (deltaTime) {
 
 // Static Signal ---------------------------------------------------------
 
-function StaticSignal(signalVisible, signalPos, signalSize, signalColor, signalInterval) {
+function StaticSignal(signalVisible, signalPos, signalSize, signalColor, signalInterval, axon_effect) {
 
 	this.spriteTextureSignal = TEXTURES.electric;
 
@@ -200,6 +201,9 @@ function StaticSignal(signalVisible, signalPos, signalSize, signalColor, signalI
 
 	this.interval = signalInterval;
 	this.timer = 0;
+
+	this.axon_effect = axon_effect;
+
 }
 
 StaticSignal.prototype.getAvgExecutionTime = function () {
@@ -338,7 +342,7 @@ Particle.prototype.free = function () {
 /* exported Active Axon, Connection */
 
 
-function ActiveAxon(neuronA, controlPointA, controlPointB, neuronB, bezierSubdivision, interval) {
+function ActiveAxon(neuronA, controlPointA, controlPointB, neuronB, bezierSubdivision, interval, axon_effect) {
     var curve = new THREE.CubicBezierCurve3(
         neuronA,
         controlPointA,
@@ -414,16 +418,20 @@ function ActiveAxon(neuronA, controlPointA, controlPointB, neuronB, bezierSubdiv
 
     this.disappear = false;
     this.oIdx = axonOpacities.length - 1;
+
+    this.axon_effect = axon_effect;
 }
 
 ActiveAxon.prototype.update = function (deltaTime) {
-    this.component.geometry.attributes.opacity.needsUpdate = true;
-    var opacity = this.component.geometry.attributes.opacity.array;
-    if (this.disappear) {
-        opacity[this.oIdx--] = 0;
-        if (this.oIdx < 0) {
-            this.oIdx = opacity.length - 1;
-            this.disappear = false;
+    if(this.axon_effect === "show"){
+        this.component.geometry.attributes.opacity.needsUpdate = true;
+        var opacity = this.component.geometry.attributes.opacity.array;
+        if (this.disappear) {
+            opacity[this.oIdx--] = 0;
+            if (this.oIdx < 0) {
+                this.oIdx = opacity.length - 1;
+                this.disappear = false;
+            }
         }
     }
 }; 
@@ -449,7 +457,7 @@ function Axon(neuronA, neuronB) {
 	//Active Axon
 	for (var i = 0; i < g_ActiveNeuronIds.length; i++) {
 		if (neuronB.idx === g_ActiveNeuronIds[i]) {
-			var activeAxon = new ActiveAxon(this.neuronA, this.controlPointA, this.controlPointB, this.neuronB, this.bezierSubdivision, g_Intervals[i]);
+			var activeAxon = new ActiveAxon(this.neuronA, this.controlPointA, this.controlPointB, this.neuronB, this.bezierSubdivision, g_Intervals[i], neuronB.axon_effect);
 			g_ActiveAxons.push(activeAxon);
 		}
 	}
@@ -760,7 +768,7 @@ NeuralNetwork.prototype.initNeurons = function (inputVertices) {
 	var staticNeuronId = 0;
 	for (var i = 0; i < inputVertices.length; i += this.settings.verticesSkipStep) {
 		var pos = inputVertices[i];
-		var n = new Neuron(staticNeuronId++, pos.x, pos.y, pos.z);
+		var n = new Neuron(staticNeuronId++, pos.x, pos.y, pos.z, null);
 		this.components.neurons.push(n);
 		this.neuronsGeom.vertices.push(n);
 		// dont set neuron's property here because its skip vertices
@@ -770,7 +778,7 @@ NeuralNetwork.prototype.initNeurons = function (inputVertices) {
 	for (var i = 0; i < this.staticSignals.length; i++) {
 		var neuronId = staticNeuronCount + i;
 		var pos = this.staticSignals[i].meshComponents.position;
-		var n = new Neuron(neuronId, pos.x, pos.y, pos.z);
+		var n = new Neuron(neuronId, pos.x, pos.y, pos.z, this.staticSignals[i].axon_effect);
 		this.components.neurons.push(n);
 		this.neuronsGeom.vertices.push(n);
 
@@ -882,7 +890,7 @@ NeuralNetwork.prototype.initConboxes = function () {
 		for (var j = 0; j < DATASET[i].signals.length; j++) {
 			var signalInfo = DATASET[i].signals[j];
 			var spos = new THREE.Vector3(boxPos.x - contextBoxSize / 2 + signalInfo.position.x * contextBoxSize / 100, boxPos.y - contextBoxSize / 2 + signalInfo.position.y * contextBoxSize / 100, boxPos.z - contextBoxSize / 2 + signalInfo.position.z * contextBoxSize / 100);
-			var s = new StaticSignal(signalInfo.visible, spos, signalInfo.size, signalInfo.color, signalInfo.interval);
+			var s = new StaticSignal(signalInfo.visible, spos, signalInfo.size, signalInfo.color, signalInfo.interval, signalInfo.axon_effect);
 			this.staticSignals.push(s);
 			this.conboxRoot.add(s.meshComponents);
 
@@ -1414,7 +1422,7 @@ var DATASET = [
 		visible: false,
 		label: { visible: true, text: "Top", size: '18px', color: '#ff0000ff' },
 		signals: [
-			{ visible: true, position: { x: 0, y: 0, z: 0 }, interval: 4000, color: '#ff0000', size: 1.5 }
+			{ visible: true, position: { x: 0, y: 0, z: 0 }, interval: 4000, color: '#ff0000', size: 1.5, axon_effect: 'show' }
 		]
 	},
 	{
@@ -1425,7 +1433,7 @@ var DATASET = [
 		visible: false,
 		label: { visible: true, text: "Bottom", size: '18px', color: '#00ff00ff' },
 		signals: [
-			{ visible: true, position: { x: 10, y: 22, z: 10 }, interval: 2000, color: '#00ff00', size: 1.2 }
+			{ visible: true, position: { x: 10, y: 22, z: 10 }, interval: 2000, color: '#00ff00', size: 1.2, axon_effect: 'hide' }
 		]
 	},
 	{
@@ -1436,7 +1444,7 @@ var DATASET = [
 		visible: false,
 		label: { visible: true, text: "Right", size: '18px', color: '#ffff00ff' },
 		signals: [
-			{ visible: true, position: { x: 88, y: 88, z: 88 }, interval: 1000, color: '#ffff00', size: 1.3 },
+			{ visible: true, position: { x: 88, y: 88, z: 88 }, interval: 1000, color: '#ffff00', size: 1.3, axon_effect: 'show' },
 		]
 	},
 	{
@@ -1447,7 +1455,7 @@ var DATASET = [
 		visible: false,
 		label: { visible: true, text: "Left", size: '18px', color: '#00ffffee' },
 		signals: [
-			{ visible: true, position: { x: 10, y: 22, z: 10 }, interval: 5000, color: '#ddff22', size: 1 }
+			{ visible: true, position: { x: 10, y: 22, z: 10 }, interval: 5000, color: '#ddff22', size: 1, axon_effect: 'hide' }
 		]
 	},
 	{
@@ -1458,7 +1466,7 @@ var DATASET = [
 		visible: false,
 		label: { visible: true, text: "Back", size: '18px', color: '#ffffffee' },
 		signals: [
-			{ visible: true, position: { x: 10, y: 22, z: 10 }, interval: 3500, color: '#00ffff', size: 1 }
+			{ visible: true, position: { x: 10, y: 22, z: 10 }, interval: 3500, color: '#00ffff', size: 1, axon_effect: 'show' }
 		]
 	},
 	{
@@ -1469,7 +1477,7 @@ var DATASET = [
 		visible: false,
 		label: { visible: true, text: "Front", size: '18px', color: '#ffffffee' },
 		signals: [
-			{ visible: true, position: { x: 10, y: 22, z: 10 }, interval: 3500, color: '#00ffff', size: 1 }
+			{ visible: true, position: { x: 10, y: 22, z: 10 }, interval: 3500, color: '#00ffff', size: 1, axon_effect: 'show' }
 		]
 	}
 

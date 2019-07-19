@@ -1,6 +1,6 @@
 // Neuron ----------------------------------------------------------------
 
-function Neuron( idx, x, y, z ) {
+function Neuron( idx, x, y, z, axon_effect ) {
 	this.idx = idx;
 	this.connection = [];
 	this.receivedSignal = false;
@@ -13,6 +13,7 @@ function Neuron( idx, x, y, z ) {
 	this.signalTimer = 0;
 	this.fireRoot = 0;
 	this.color = "#ffffff";
+	this.axon_effect = axon_effect;
 	THREE.Vector3.call( this, x, y, z );
 }
 

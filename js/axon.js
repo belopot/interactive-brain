@@ -20,7 +20,7 @@ function Axon(neuronA, neuronB) {
 	//Active Axon
 	for (var i = 0; i < g_ActiveNeuronIds.length; i++) {
 		if (neuronB.idx === g_ActiveNeuronIds[i]) {
-			var activeAxon = new ActiveAxon(this.neuronA, this.controlPointA, this.controlPointB, this.neuronB, this.bezierSubdivision, g_Intervals[i]);
+			var activeAxon = new ActiveAxon(this.neuronA, this.controlPointA, this.controlPointB, this.neuronB, this.bezierSubdivision, g_Intervals[i], neuronB.axon_effect);
 			g_ActiveAxons.push(activeAxon);
 		}
 	}

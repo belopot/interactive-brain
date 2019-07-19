@@ -124,29 +124,30 @@ ActiveSignal.prototype.travel = function (deltaTime) {
 	if (this.activeAxon != null) {
 		var opacity = this.activeAxon.component.geometry.attributes.opacity.array;
 		var position = this.activeAxon.component.geometry.attributes.position.array;
+
 		if (this.alive) {
 			//visible segment
 			for (var i = 0; i < opacity.length / 2; i++) {
 				//pos1
 				var pos1 = new THREE.Vector3(position[i * 6 + 0], position[i * 6 + 1], position[i * 6 + 2]);
 				if (pos.distanceTo(pos1) < 0.5) {
-					opacity[i * 2] = 1.0;
+					opacity[i * 2] = 0.7;
 					break;
 				}
 				var pos2 = new THREE.Vector3(position[i * 6 + 3], position[i * 6 + 4], position[i * 6 + 5]);
 				if (pos.distanceTo(pos2) < 0.5) {
-					opacity[i * 2 + 1] = 1.0;
+					opacity[i * 2 + 1] = 0.7;
 					break;
 				}
 			}
 		}
 		else {
 			//invisible segment
-			for (var i = 0; i < opacity.length; i++) {
-				opacity[i] = 0.0;
-			}
+			// for (var i = 0; i < opacity.length; i++) {
+			// 	opacity[i] = 0.0;
+			// }
+			this.activeAxon.disappear = true;
 		}
-
 	}
 
 };
@@ -348,16 +349,7 @@ function ActiveAxon(neuronA, controlPointA, controlPointB, neuronB, bezierSubdiv
     var axonNextPositionsIndex = 0;
     this.startNeuronIdx = neuronB.idx;
     this.endNeuronIdx = neuronA.idx;
-    this.axonLength = 0;
-    if (points.length >= 2) {
-        this.axonLength = points[0].distanceTo(points[1]) * bezierSubdivision;
-    }
     this.interval = interval;
-    this.currentDis = 0;
-    this.currentSegmentIdx = 0;
-    this.segmentLength = this.axonLength / bezierSubdivision;
-    this.division = bezierSubdivision;
-    this.speed = this.axonLength / interval;
     this.axonGeometry = new THREE.BufferGeometry();
     this.axonColor = parseInt("0x" + neuronB.color.substring(1));
 
@@ -419,28 +411,21 @@ function ActiveAxon(neuronA, controlPointA, controlPointB, neuronB, bezierSubdiv
     });
 
     this.component = new THREE.Line(this.axonGeometry, this.material, THREE.LinePieces);
+
+    this.disappear = false;
+    this.oIdx = axonOpacities.length - 1;
 }
 
 ActiveAxon.prototype.update = function (deltaTime) {
     this.component.geometry.attributes.opacity.needsUpdate = true;
-    // var opacity = this.component.geometry.attributes.opacity.array;
-    // this.currentDis += deltaTime * this.speed;
-    // if (this.currentDis > this.axonLength) {
-    //     this.currentDis = 0;
-    //     for (var i = 0; i < opacity.length; i++) {
-    //         //invisible segment
-    //         opacity[i] = 0.0;
-    //     }
-    // }
-    // this.currentSegmentIdx = Math.floor(this.currentDis / this.segmentLength);
-    // for (var i = 0; i < this.division; i++) {
-    //     if (this.currentSegmentIdx === i) {
-    //         //visible segment
-    //         opacity[ (this.division + 1 - i) * 2] = 1;
-    //         opacity[(this.division + 1 - i) * 2 + 1] = 1;
-    //         break;
-    //     }
-    // }
+    var opacity = this.component.geometry.attributes.opacity.array;
+    if (this.disappear) {
+        opacity[this.oIdx--] = 0;
+        if (this.oIdx < 0) {
+            this.oIdx = opacity.length - 1;
+            this.disappear = false;
+        }
+    }
 }; 
 // Axon extends THREE.CubicBezierCurve3 ------------------------------------------------------------------
 /* exported Axon, Connection */
@@ -597,7 +582,7 @@ function NeuralNetwork() {
 
 	// axon
 	this.axonOpacityMultiplier = 0.1;
-	this.axonColor = '#ffffff';
+	this.axonColor = '#14d5ff';
 	this.axonGeom = new THREE.BufferGeometry();
 	this.axonPositions = [];
 	this.axonIndices = [];
@@ -1168,7 +1153,7 @@ var FRAME_COUNT = 0;
 var sceneSettings = {
 
 	pause: false,
-	bgColor: 0x111113,
+	bgColor: 0x020220,
 	enableGridHelper: false,
 	enableAxisHelper: false
 
@@ -1427,7 +1412,7 @@ var DATASET = [
 		y: 22, 
 		z: 15, 
 		visible: false,
-		label: { visible: true, text: "Top_Box", size: '18px', color: '#ff0000ff' },
+		label: { visible: true, text: "Top", size: '18px', color: '#ff0000ff' },
 		signals: [
 			{ visible: true, position: { x: 0, y: 0, z: 0 }, interval: 4000, color: '#ff0000', size: 1.5 }
 		]
@@ -1438,7 +1423,7 @@ var DATASET = [
 		y: 5, 
 		z: 15, 
 		visible: false,
-		label: { visible: true, text: "Bottom_Box", size: '18px', color: '#00ff00ff' },
+		label: { visible: true, text: "Bottom", size: '18px', color: '#00ff00ff' },
 		signals: [
 			{ visible: true, position: { x: 10, y: 22, z: 10 }, interval: 2000, color: '#00ff00', size: 1.2 }
 		]
@@ -1449,7 +1434,7 @@ var DATASET = [
 		y: 11, 
 		z: 15, 
 		visible: false,
-		label: { visible: true, text: "Right_Box", size: '18px', color: '#ffff00ff' },
+		label: { visible: true, text: "Right", size: '18px', color: '#ffff00ff' },
 		signals: [
 			{ visible: true, position: { x: 88, y: 88, z: 88 }, interval: 1000, color: '#ffff00', size: 1.3 },
 		]
@@ -1459,8 +1444,8 @@ var DATASET = [
 		x: 22, 
 		y: 11, 
 		z: 15, 
-		visible: true,
-		label: { visible: true, text: "Left_Box", size: '18px', color: '#00ffffee' },
+		visible: false,
+		label: { visible: true, text: "Left", size: '18px', color: '#00ffffee' },
 		signals: [
 			{ visible: true, position: { x: 10, y: 22, z: 10 }, interval: 5000, color: '#ddff22', size: 1 }
 		]
@@ -1470,8 +1455,8 @@ var DATASET = [
 		x: 12, 
 		y: 11, 
 		z: 0, 
-		visible: true,
-		label: { visible: true, text: "Back_Box", size: '18px', color: '#ffffffee' },
+		visible: false,
+		label: { visible: true, text: "Back", size: '18px', color: '#ffffffee' },
 		signals: [
 			{ visible: true, position: { x: 10, y: 22, z: 10 }, interval: 3500, color: '#00ffff', size: 1 }
 		]
@@ -1481,8 +1466,8 @@ var DATASET = [
 		x: 12, 
 		y: 11, 
 		z: 28, 
-		visible: true,
-		label: { visible: true, text: "Front_Box", size: '18px', color: '#ffffffee' },
+		visible: false,
+		label: { visible: true, text: "Front", size: '18px', color: '#ffffffee' },
 		signals: [
 			{ visible: true, position: { x: 10, y: 22, z: 10 }, interval: 3500, color: '#00ffff', size: 1 }
 		]

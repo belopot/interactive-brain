@@ -35,7 +35,7 @@ function NeuralNetwork() {
 
 	// axon
 	this.axonOpacityMultiplier = 0.1;
-	this.axonColor = '#ffffff';
+	this.axonColor = '#14d5ff';
 	this.axonGeom = new THREE.BufferGeometry();
 	this.axonPositions = [];
 	this.axonIndices = [];

@@ -13,16 +13,7 @@ function ActiveAxon(neuronA, controlPointA, controlPointB, neuronB, bezierSubdiv
     var axonNextPositionsIndex = 0;
     this.startNeuronIdx = neuronB.idx;
     this.endNeuronIdx = neuronA.idx;
-    this.axonLength = 0;
-    if (points.length >= 2) {
-        this.axonLength = points[0].distanceTo(points[1]) * bezierSubdivision;
-    }
     this.interval = interval;
-    this.currentDis = 0;
-    this.currentSegmentIdx = 0;
-    this.segmentLength = this.axonLength / bezierSubdivision;
-    this.division = bezierSubdivision;
-    this.speed = this.axonLength / interval;
     this.axonGeometry = new THREE.BufferGeometry();
     this.axonColor = parseInt("0x" + neuronB.color.substring(1));
 
@@ -84,26 +75,19 @@ function ActiveAxon(neuronA, controlPointA, controlPointB, neuronB, bezierSubdiv
     });
 
     this.component = new THREE.Line(this.axonGeometry, this.material, THREE.LinePieces);
+
+    this.disappear = false;
+    this.oIdx = axonOpacities.length - 1;
 }
 
 ActiveAxon.prototype.update = function (deltaTime) {
     this.component.geometry.attributes.opacity.needsUpdate = true;
-    // var opacity = this.component.geometry.attributes.opacity.array;
-    // this.currentDis += deltaTime * this.speed;
-    // if (this.currentDis > this.axonLength) {
-    //     this.currentDis = 0;
-    //     for (var i = 0; i < opacity.length; i++) {
-    //         //invisible segment
-    //         opacity[i] = 0.0;
-    //     }
-    // }
-    // this.currentSegmentIdx = Math.floor(this.currentDis / this.segmentLength);
-    // for (var i = 0; i < this.division; i++) {
-    //     if (this.currentSegmentIdx === i) {
-    //         //visible segment
-    //         opacity[ (this.division + 1 - i) * 2] = 1;
-    //         opacity[(this.division + 1 - i) * 2 + 1] = 1;
-    //         break;
-    //     }
-    // }
+    var opacity = this.component.geometry.attributes.opacity.array;
+    if (this.disappear) {
+        opacity[this.oIdx--] = 0;
+        if (this.oIdx < 0) {
+            this.oIdx = opacity.length - 1;
+            this.disappear = false;
+        }
+    }
 }; 

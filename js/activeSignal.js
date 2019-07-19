@@ -63,29 +63,30 @@ ActiveSignal.prototype.travel = function (deltaTime) {
 	if (this.activeAxon != null) {
 		var opacity = this.activeAxon.component.geometry.attributes.opacity.array;
 		var position = this.activeAxon.component.geometry.attributes.position.array;
+
 		if (this.alive) {
 			//visible segment
 			for (var i = 0; i < opacity.length / 2; i++) {
 				//pos1
 				var pos1 = new THREE.Vector3(position[i * 6 + 0], position[i * 6 + 1], position[i * 6 + 2]);
 				if (pos.distanceTo(pos1) < 0.5) {
-					opacity[i * 2] = 1.0;
+					opacity[i * 2] = 0.7;
 					break;
 				}
 				var pos2 = new THREE.Vector3(position[i * 6 + 3], position[i * 6 + 4], position[i * 6 + 5]);
 				if (pos.distanceTo(pos2) < 0.5) {
-					opacity[i * 2 + 1] = 1.0;
+					opacity[i * 2 + 1] = 0.7;
 					break;
 				}
 			}
 		}
 		else {
 			//invisible segment
-			for (var i = 0; i < opacity.length; i++) {
-				opacity[i] = 0.0;
-			}
+			// for (var i = 0; i < opacity.length; i++) {
+			// 	opacity[i] = 0.0;
+			// }
+			this.activeAxon.disappear = true;
 		}
-
 	}
 
 };

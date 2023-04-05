@@ -13,7 +13,7 @@ function main() {
 	var marker = new THREE.Mesh(geometry, material);
 	marker.rotation.set(-Math.PI / 2, 0, 0);
 	marker.position.set(0, -80, 0);
-	scene.add(marker);
+	//scene.add(marker);
 
 	initGui();
 	run();
